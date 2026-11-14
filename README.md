@@ -4,21 +4,9 @@
 
 `idk-check` is a test runner for RAG apps and support bots. You point it at your docs and your running app. It asks questions your docs **can** answer, plus questions they **can't**, and reports both sides of the trade-off with confidence intervals. In CI it fails the build when either side gets worse.
 
-```
-$ npx idk-check run --min-abstain 0.85 --max-false-refusal 0.15
+![idk-check failing a build because the bot refuses too much and still invents answers](docs/cli-run.png)
 
-### ❌ support-bot: declined 79% of questions the docs can't answer · answered 50% of ones they can
-
-| | result | 95% CI |
-|---|---:|---:|
-| said "I don't know" when it should      | 19/24 | 60%–91% |
-| answered anyway (should have declined)  |  4/24 |         |
-| answered correctly when it could        |  6/12 | 25%–75% |
-| refused a question it could answer      |  6/12 |         |
-
-- ❌ declined 79% of unanswerable questions; need ≥ 85%
-- ❌ refused 50% of answerable questions; allowed ≤ 15%
-```
+*Real output from the repo's demo bot (see [What the demo shows](#what-the-demo-shows)). The exit code is what fails your pull request.*
 
 Zero runtime dependencies. Works with any app you can reach over HTTP, a shell command or a function call.
 
@@ -49,6 +37,10 @@ The easy fix ("refuse unless you're sure") breaks the other side: the bot starts
 | eager (always answer) | 6/24 (25%) | 17 | 7/12 | 0 |
 | strict (refuse unless every keyword matches) | 23/24 (96%) | 1 | 4/12 | 8 |
 | balanced | 19/24 (79%) | 4 | 6/12 | 6 |
+
+![Trade-off chart: three bot settings, none inside the passing zone](docs/tradeoff.svg)
+
+*The green box is the gate (declines ≥ 90% of unanswerable questions while refusing ≤ 10% of answerable ones). It stays empty: every step toward "careful" costs refusals. Regenerate with `node scripts/chart.mjs` after `npm run demo`.*
 
 None of the three passes a sensible gate. Turning the "be careful" knob trades invented answers for refused ones, and a single accuracy number would have hidden it. Real LLM apps sit somewhere on the same curve; this tool tells you where, and alerts you when a prompt or model change moves you.
 
