@@ -82,6 +82,8 @@ export function commandTarget(cmd: string, timeoutMs = 60_000): Ask {
         if (code === 0) resolve(out.trim());
         else reject(new Error(`command exited ${code}: ${err.trim().slice(0, 200)}`));
       });
+      // a command that exits before reading stdin (crash, `exit 3`) closes the pipe; the exit code already reports that
+      p.stdin.on("error", () => {});
       p.stdin.end(question);
     });
 }
