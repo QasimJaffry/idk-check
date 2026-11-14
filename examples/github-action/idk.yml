@@ -1,0 +1,19 @@
+# Copy to .github/workflows/idk.yml in your app's repo.
+# Starts your app, runs your reviewed suite against it, fails the PR if it starts making things up.
+name: idk-check
+on: [pull_request]
+jobs:
+  abstention:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - run: npm ci && npm run build
+      - run: npm start &            # your app
+      - run: npx wait-on http://localhost:3000/health
+      - run: npx idk-check run --min-abstain 0.85 --max-false-refusal 0.15
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}   # only needed with --llm-judge
+      - if: always()
+        run: cat .idk/report.md >> "$GITHUB_STEP_SUMMARY"

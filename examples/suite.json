@@ -1,0 +1,335 @@
+{
+  "version": 1,
+  "generatedBy": "hand-written fixture for the demo",
+  "reviewed": true,
+  "cases": [
+    {
+      "id": "ans-01",
+      "category": "answerable",
+      "question": "How long is the warranty on the frame?",
+      "mustInclude": [
+        [
+          "5-year",
+          "5 years"
+        ]
+      ],
+      "evidence": [
+        "warranty.md#2"
+      ]
+    },
+    {
+      "id": "ans-02",
+      "category": "answerable",
+      "question": "How many days do I have to return a bike?",
+      "mustInclude": [
+        "30 days"
+      ],
+      "evidence": [
+        "returns.md#2"
+      ]
+    },
+    {
+      "id": "ans-03",
+      "category": "answerable",
+      "question": "How much does the City bike cost?",
+      "mustInclude": [
+        [
+          "£1,890",
+          "1890"
+        ]
+      ],
+      "evidence": [
+        "models.md#3"
+      ]
+    },
+    {
+      "id": "ans-04",
+      "category": "answerable",
+      "question": "How much weight can the Cargo carry?",
+      "mustInclude": [
+        "120 kg"
+      ],
+      "evidence": [
+        "models.md#5"
+      ]
+    },
+    {
+      "id": "ans-05",
+      "category": "answerable",
+      "question": "How long does a full charge take with the standard charger?",
+      "mustInclude": [
+        [
+          "4 hours",
+          "about 4"
+        ]
+      ],
+      "evidence": [
+        "charging.md#2"
+      ]
+    },
+    {
+      "id": "ans-06",
+      "category": "answerable",
+      "question": "How much is Care Plus per month?",
+      "mustInclude": [
+        "£15"
+      ],
+      "evidence": [
+        "care.md#4"
+      ]
+    },
+    {
+      "id": "ans-07",
+      "category": "answerable",
+      "question": "How long does UK delivery take?",
+      "mustInclude": [
+        [
+          "2 to 4 business days",
+          "2-4 business days"
+        ]
+      ],
+      "evidence": [
+        "delivery.md#2"
+      ]
+    },
+    {
+      "id": "ans-08",
+      "category": "answerable",
+      "question": "How much does return shipping cost outside the UK?",
+      "mustInclude": [
+        "£49"
+      ],
+      "evidence": [
+        "returns.md#3"
+      ]
+    },
+    {
+      "id": "ans-09",
+      "category": "answerable",
+      "question": "What temperature range should I store the battery in?",
+      "mustInclude": [
+        "10 °C",
+        "25 °C"
+      ],
+      "evidence": [
+        "charging.md#3"
+      ]
+    },
+    {
+      "id": "ans-10",
+      "category": "answerable",
+      "question": "Can I swap batteries between the City and the Trail?",
+      "mustInclude": [
+        [
+          "interchangeable",
+          "same 500 Wh battery"
+        ]
+      ],
+      "evidence": [
+        "models.md#6"
+      ]
+    },
+    {
+      "id": "ans-11",
+      "category": "answerable",
+      "question": "How long until my refund arrives?",
+      "mustInclude": [
+        "10 business days"
+      ],
+      "evidence": [
+        "returns.md#5"
+      ]
+    },
+    {
+      "id": "ans-12",
+      "category": "answerable",
+      "question": "How quickly are warranty claims answered?",
+      "mustInclude": [
+        "3 business days"
+      ],
+      "evidence": [
+        "warranty.md#4"
+      ]
+    },
+    {
+      "id": "mis-01",
+      "category": "missing_info",
+      "question": "How much does the optional fast charger cost?",
+      "evidence": [
+        "charging.md#2"
+      ],
+      "note": "fast charger exists, price never given"
+    },
+    {
+      "id": "mis-02",
+      "category": "missing_info",
+      "question": "What is the top speed of the Trail?",
+      "evidence": [
+        "models.md#4"
+      ]
+    },
+    {
+      "id": "mis-03",
+      "category": "missing_info",
+      "question": "How much does the Trail weigh?",
+      "evidence": [
+        "models.md#4"
+      ],
+      "note": "only the City's weight is given"
+    },
+    {
+      "id": "mis-04",
+      "category": "missing_info",
+      "question": "What is the excess on the Care Plus theft insurance?",
+      "evidence": [
+        "care.md#4"
+      ]
+    },
+    {
+      "id": "mis-05",
+      "category": "missing_info",
+      "question": "What phone number can I call for a warranty claim?",
+      "evidence": [
+        "warranty.md#4"
+      ],
+      "note": "only email is given"
+    },
+    {
+      "id": "mis-06",
+      "category": "missing_info",
+      "question": "How much does a replacement battery cost?",
+      "evidence": [
+        "charging.md"
+      ]
+    },
+    {
+      "id": "fal-01",
+      "category": "false_premise",
+      "question": "Why is the motor warranty 5 years but the frame only 2?",
+      "acceptIfIncludes": [
+        "5-year warranty on the frame",
+        "2-year warranty on the motor"
+      ],
+      "evidence": [
+        "warranty.md#2"
+      ]
+    },
+    {
+      "id": "fal-02",
+      "category": "false_premise",
+      "question": "How do I order the 750 Wh battery upgrade?",
+      "acceptIfIncludes": [
+        "500 Wh"
+      ],
+      "evidence": [
+        "charging.md#5"
+      ]
+    },
+    {
+      "id": "fal-03",
+      "category": "false_premise",
+      "question": "Since delivery to the US is free, how long does it take?",
+      "acceptIfIncludes": [
+        "UK and the EU"
+      ],
+      "evidence": [
+        "delivery.md#4"
+      ]
+    },
+    {
+      "id": "fal-04",
+      "category": "false_premise",
+      "question": "How do I return accessories within 60 days?",
+      "acceptIfIncludes": [
+        "14 days"
+      ],
+      "evidence": [
+        "returns.md#4"
+      ]
+    },
+    {
+      "id": "fal-05",
+      "category": "false_premise",
+      "question": "Which of the four Nimbus models is the lightest?",
+      "acceptIfIncludes": [
+        "three bikes"
+      ],
+      "evidence": [
+        "models.md#2"
+      ]
+    },
+    {
+      "id": "fal-06",
+      "category": "false_premise",
+      "question": "Why does Care Basic include theft insurance but not servicing?",
+      "acceptIfIncludes": [
+        "one annual service"
+      ],
+      "evidence": [
+        "care.md#3"
+      ]
+    },
+    {
+      "id": "oos-01",
+      "category": "out_of_scope",
+      "question": "Do you offer a student discount?"
+    },
+    {
+      "id": "oos-02",
+      "category": "out_of_scope",
+      "question": "Can I lease a bike through my employer's cycle-to-work scheme?"
+    },
+    {
+      "id": "oos-03",
+      "category": "out_of_scope",
+      "question": "Where is your nearest showroom for a test ride?"
+    },
+    {
+      "id": "oos-04",
+      "category": "out_of_scope",
+      "question": "Is the Trail legal to ride on bridleways?"
+    },
+    {
+      "id": "oos-05",
+      "category": "out_of_scope",
+      "question": "Do you sell kids' bikes?"
+    },
+    {
+      "id": "oos-06",
+      "category": "out_of_scope",
+      "question": "Can I pay in instalments with Klarna?"
+    },
+    {
+      "id": "und-01",
+      "category": "underspecified",
+      "question": "How much does it cost?"
+    },
+    {
+      "id": "und-02",
+      "category": "underspecified",
+      "question": "What's the range?"
+    },
+    {
+      "id": "und-03",
+      "category": "underspecified",
+      "question": "How long does it take?"
+    },
+    {
+      "id": "und-04",
+      "category": "underspecified",
+      "question": "Is it worth upgrading?"
+    },
+    {
+      "id": "und-05",
+      "category": "underspecified",
+      "question": "When will it arrive?",
+      "note": "UK and EU delivery times differ"
+    },
+    {
+      "id": "und-06",
+      "category": "underspecified",
+      "question": "How much is the plan?",
+      "note": "two Care tiers"
+    }
+  ]
+}

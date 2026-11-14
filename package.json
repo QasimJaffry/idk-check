@@ -1,0 +1,39 @@
+{
+  "name": "idk-check",
+  "version": "0.1.0",
+  "description": "Test whether your AI app says \"I don't know\" when your documents can't answer, without refusing everything. CI-ready.",
+  "type": "module",
+  "bin": {
+    "idk-check": "dist/cli.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "demo": "npm run build && node examples/run-demo.mjs"
+  },
+  "keywords": [
+    "rag",
+    "llm",
+    "evaluation",
+    "hallucination",
+    "abstention",
+    "ci",
+    "testing"
+  ],
+  "license": "MIT",
+  "author": "Syed Qasim Hassan Jaffry",
+  "devDependencies": {
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.0"
+  }
+}
