@@ -1,6 +1,13 @@
-# idk-check
+<h1 align="center">
+  <img src="docs/hero.svg" width="100%" alt="idk-check: does your AI say I don't know when it should? An eager bot invents an answer the docs don't contain, a strict bot refuses a question the docs do answer. idk-check scores both mistakes.">
+</h1>
 
-**Does your AI app say "I don't know" when it should, without refusing everything?**
+<p align="center">
+  <a href="https://github.com/QasimJaffry/idk-check/actions/workflows/ci.yml"><img src="https://github.com/QasimJaffry/idk-check/actions/workflows/ci.yml/badge.svg" alt="CI status"></a>
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license">
+  <img src="https://img.shields.io/badge/tests-43%20passing-brightgreen" alt="43 tests passing">
+  <img src="https://img.shields.io/badge/dependencies-0-brightgreen" alt="Zero runtime dependencies">
+</p>
 
 `idk-check` is a test runner for RAG apps and support bots. You point it at your docs and your running app. It asks questions your docs **can** answer, plus questions they **can't**, and reports both sides of the trade-off with confidence intervals. In CI it fails the build when either side gets worse.
 
@@ -9,6 +16,15 @@
 *Real output from the repo's demo bot (see [What the demo shows](#what-the-demo-shows)). The exit code is what fails your pull request.*
 
 Zero runtime dependencies. Works with any app you can reach over HTTP, a shell command or a function call.
+
+## Try it in 60 seconds
+
+```bash
+git clone https://github.com/QasimJaffry/idk-check && cd idk-check
+npm ci && npm run demo      # runs 36 test cases against a demo bot at three confidence settings
+```
+
+It prints the report for each setting and writes them to `examples/out/`. Needs Node 20+.
 
 ## Why this exists
 
@@ -47,8 +63,8 @@ None of the three passes a sensible gate. Turning the "be careful" knob trades i
 ## Quick start
 
 ```bash
-npm i -D idk-check
-npx idk-check init                 # writes idk.config.mjs
+npm i -D github:QasimJaffry/idk-check     # not on npm yet, so install from GitHub
+npx idk-check init                         # writes idk.config.mjs
 ```
 
 ```js

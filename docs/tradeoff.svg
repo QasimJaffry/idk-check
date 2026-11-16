@@ -1,4 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 540" font-family="ui-sans-serif,system-ui,sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 540" role="img" aria-labelledby="t d" font-family="ui-sans-serif,system-ui,sans-serif">
+<title id="t">The abstention trade-off for three bot settings</title>
+<desc id="d">eager: 6/24 declined · 0/12 refused; balanced: 19/24 declined · 6/12 refused; strict: 23/24 declined · 8/12 refused. None reaches the passing zone of at least 90% declined and at most 10% refused.</desc>
 <rect width="860" height="540" rx="14" fill="#0b0f17"/>
 <text x="84" y="34" fill="#e6ebf5" font-size="21" font-weight="700">The trade-off: inventing answers vs refusing answerable ones</text>
 <text x="84" y="54" fill="#9aa6bf" font-size="13">Demo bot at three confidence settings · 24 unanswerable + 12 answerable questions · bars are 95% intervals</text>

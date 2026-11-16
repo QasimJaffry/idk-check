@@ -19,7 +19,8 @@
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "demo": "npm run build && node examples/run-demo.mjs",
-    "chart": "node scripts/chart.mjs"
+    "chart": "node scripts/chart.mjs",
+    "prepare": "npm run build"
   },
   "keywords": [
     "rag",
