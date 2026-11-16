@@ -20,7 +20,8 @@
     "typecheck": "tsc --noEmit",
     "demo": "npm run build && node examples/run-demo.mjs",
     "chart": "node scripts/chart.mjs",
-    "prepare": "npm run build"
+    "prepare": "npm run build",
+    "site": "npm run build && node examples/run-demo.mjs && node scripts/chart.mjs && node scripts/build-site.mjs"
   },
   "keywords": [
     "rag",

@@ -13,6 +13,7 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       - run: npm run demo
+      - run: npm run site
       # dogfood: the gate itself, run against the demo bot over HTTP
       - run: |
           node examples/bots/server.mjs balanced &

@@ -17,6 +17,8 @@
 
 Zero runtime dependencies. Works with any app you can reach over HTTP, a shell command or a function call.
 
+**[Try the judge in your browser](https://qasimjaffry.github.io/idk-check/)**: type a bot reply and see the verdict. The page runs the same judging code as the CLI and sends nothing anywhere.
+
 ## Try it in 60 seconds
 
 ```bash
@@ -152,6 +154,7 @@ npm ci
 npm test          # 43 tests, including scripted fake LLMs for the generator and judge
 npm run typecheck
 npm run demo      # writes examples/out/{eager,strict,balanced}.md
+npm run site      # builds the browser playground into site/index.html
 ```
 
 MIT © Qasim Hassan Jaffry

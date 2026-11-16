@@ -2,3 +2,4 @@ node_modules/
 dist/
 .idk/
 examples/out/*.json
+site/
