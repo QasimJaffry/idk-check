@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>idk-check playground</title>
+<meta name="description" content="Type a bot reply and see how idk-check judges it. Runs the real judge in your browser.">
+<style>
+  :root { --bg:#0a0d14; --panel:#0f1420; --line:#1f2a3d; --text:#e6ebf5; --dim:#9aa6bf; --mute:#69748c;
+          --good:#4cd08a; --bad:#ff6b6b; --warn:#ffc857; --blue:#7fb2ff; }
+  * { box-sizing:border-box }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif }
+  main { max-width:920px; margin:0 auto; padding:40px 20px 64px }
+  h1 { font-size:34px; letter-spacing:-.5px; margin:0 0 6px }
+  h2 { font-size:21px; margin:44px 0 10px }
+  p { color:var(--dim); margin:0 0 14px; max-width:68ch }
+  a { color:var(--blue) }
+  .panel { background:var(--panel); border:1px solid var(--line); border-radius:14px; padding:20px }
+  label { display:block; font-size:13px; color:var(--mute); text-transform:uppercase; letter-spacing:.08em; margin:0 0 6px }
+  select, textarea, button { font:inherit; color:var(--text); background:#0a0e18; border:1px solid var(--line); border-radius:10px }
+  select { width:100%; padding:10px 12px }
+  textarea { width:100%; min-height:92px; padding:12px; resize:vertical }
+  select:focus-visible, textarea:focus-visible, button:focus-visible { outline:2px solid var(--blue); outline-offset:2px }
+  .row { display:flex; flex-wrap:wrap; gap:8px; margin:10px 0 16px }
+  button { padding:7px 12px; cursor:pointer; color:var(--dim) }
+  button:hover { color:var(--text); border-color:#33415c }
+  .meta { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 16px; font-size:14px }
+  .chip { border:1px solid var(--line); border-radius:999px; padding:3px 10px; color:var(--dim) }
+  .chip b { color:var(--text); font-weight:600 }
+  #verdict { border-radius:12px; padding:14px 16px; margin-top:16px; border:1px solid var(--line) }
+  #verdict .o { font-weight:700; font-size:18px }
+  #verdict .r { color:var(--dim); font-size:15px; margin-top:2px }
+  .pass { background:#0f2219; border-color:#215c40 !important } .pass .o { color:var(--good) }
+  .fail { background:#2a1316; border-color:#6b2a30 !important } .fail .o { color:var(--bad) }
+  .unclear { background:#2a2313; border-color:#6b5a24 !important } .unclear .o { color:var(--warn) }
+  table { width:100%; border-collapse:collapse; font-size:15px }
+  th, td { text-align:right; padding:9px 10px; border-bottom:1px solid var(--line) }
+  th:first-child, td:first-child { text-align:left }
+  th { color:var(--mute); font-weight:600; font-size:13px }
+  .chart svg { width:100%; height:auto; display:block }
+  footer { margin-top:48px; color:var(--mute); font-size:14px }
+  .note { font-size:14px; color:var(--mute) }
+</style>
+</head>
+<body>
+<main>
+  <h1>idk-check playground</h1>
+  <p>idk-check tests whether an AI app says "I don't know" when its documents can't answer a question, without refusing questions it could answer. This page runs the same judging code as the command-line tool, in your browser. Nothing you type leaves the page.</p>
+  <p><a href="https://github.com/QasimJaffry/idk-check">Source and docs on GitHub</a></p>
+
+  <h2>Judge a reply</h2>
+  <p>Pick a test question from the example suite (docs for a fictional e-bike company), then type what a bot might answer or load a reply the demo bot gave.</p>
+  <div class="panel">
+    <label for="case">Test question</label>
+    <select id="case"></select>
+    <div class="meta" id="meta"></div>
+    <label for="reply">Bot reply</label>
+    <textarea id="reply" spellcheck="false"></textarea>
+    <div class="row" id="presets"></div>
+    <div id="verdict" role="status" aria-live="polite"></div>
+    <p class="note" style="margin-top:12px">Rules only: no model is called. Replies that hedge and still state specifics are marked unclear, and the CLI can pass those to an optional LLM judge.</p>
+  </div>
+
+  <h2>What the demo run found</h2>
+  <p>The same 36 questions were put to a deliberately simple demo bot at three confidence settings. These are results for that demo bot, not for any real AI model.</p>
+  <div class="panel"><table id="results"></table></div>
+  <div class="panel chart" style="margin-top:14px;padding:8px"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 540" role="img" aria-labelledby="t d" font-family="ui-sans-serif,system-ui,sans-serif">
+<title id="t">The abstention trade-off for three bot settings</title>
+<desc id="d">eager: 6/24 declined · 0/12 refused; balanced: 19/24 declined · 6/12 refused; strict: 23/24 declined · 8/12 refused. None reaches the passing zone of at least 90% declined and at most 10% refused.</desc>
+<rect width="860" height="540" rx="14" fill="#0b0f17"/>
+<text x="84" y="34" fill="#e6ebf5" font-size="21" font-weight="700">The trade-off: inventing answers vs refusing answerable ones</text>
+<text x="84" y="54" fill="#9aa6bf" font-size="13">Demo bot at three confidence settings · 24 unanswerable + 12 answerable questions · bars are 95% intervals</text>
+<rect x="84" y="70" width="74" height="38.79999999999998" fill="#4cd08a" fill-opacity=".16" stroke="#4cd08a" stroke-dasharray="4 3"/>
+<text x="166" y="93.40000000000002" fill="#4cd08a" font-size="12.5" font-weight="600">gate: ≥90% declined, ≤10% refused</text>
+<line x1="84" x2="824" y1="458" y2="458" stroke="#1d2638"/>
+<text x="74" y="462" fill="#9aa6bf" font-size="12" text-anchor="end">0%</text>
+<line y1="70" y2="458" x1="84" x2="84" stroke="#1d2638"/>
+<text x="84" y="478" fill="#9aa6bf" font-size="12" text-anchor="middle">0%</text>
+<line x1="84" x2="824" y1="361" y2="361" stroke="#1d2638"/>
+<text x="74" y="365" fill="#9aa6bf" font-size="12" text-anchor="end">25%</text>
+<line y1="70" y2="458" x1="269" x2="269" stroke="#1d2638"/>
+<text x="269" y="478" fill="#9aa6bf" font-size="12" text-anchor="middle">25%</text>
+<line x1="84" x2="824" y1="264" y2="264" stroke="#1d2638"/>
+<text x="74" y="268" fill="#9aa6bf" font-size="12" text-anchor="end">50%</text>
+<line y1="70" y2="458" x1="454" x2="454" stroke="#1d2638"/>
+<text x="454" y="478" fill="#9aa6bf" font-size="12" text-anchor="middle">50%</text>
+<line x1="84" x2="824" y1="167" y2="167" stroke="#1d2638"/>
+<text x="74" y="171" fill="#9aa6bf" font-size="12" text-anchor="end">75%</text>
+<line y1="70" y2="458" x1="639" x2="639" stroke="#1d2638"/>
+<text x="639" y="478" fill="#9aa6bf" font-size="12" text-anchor="middle">75%</text>
+<line x1="84" x2="824" y1="70" y2="70" stroke="#1d2638"/>
+<text x="74" y="74" fill="#9aa6bf" font-size="12" text-anchor="end">100%</text>
+<line y1="70" y2="458" x1="824" x2="824" stroke="#1d2638"/>
+<text x="824" y="478" fill="#9aa6bf" font-size="12" text-anchor="middle">100%</text>
+<text x="454" y="512" fill="#c4cde0" font-size="13.5" text-anchor="middle">refused questions it could answer  →  worse</text>
+<text transform="translate(24 264) rotate(-90)" fill="#c4cde0" font-size="13.5" text-anchor="middle">said "I don't know" when it should  →  better</text>
+<line x1="84" x2="84" y1="411.44245930411614" y2="283.7901566249263" stroke="#ff6b6b" stroke-width="3" stroke-opacity=".55" stroke-linecap="round"/>
+<circle cx="84" cy="361" r="9" fill="#ff6b6b" stroke="#0b0f17" stroke-width="2.5"/>
+<text x="102" y="359" fill="#e6ebf5" font-size="15" font-weight="700" text-anchor="start">eager</text>
+<text x="102" y="376" fill="#9aa6bf" font-size="12" text-anchor="start">6/24 declined · 0/12 refused</text>
+<line x1="454" x2="454" y1="227.02535927397827" y2="105.86992214213896" stroke="#ffb74d" stroke-width="3" stroke-opacity=".55" stroke-linecap="round"/>
+<circle cx="454" cy="150.83333333333337" r="9" fill="#ffb74d" stroke="#0b0f17" stroke-width="2.5"/>
+<text x="472" y="148.83333333333337" fill="#e6ebf5" font-size="15" font-weight="700" text-anchor="start">balanced</text>
+<text x="472" y="165.83333333333337" fill="#9aa6bf" font-size="12" text-anchor="start">19/24 declined · 6/12 refused</text>
+<line x1="577.3333333333333" x2="577.3333333333333" y1="148.53820983631988" y2="72.86866096043576" stroke="#6ea8ff" stroke-width="3" stroke-opacity=".55" stroke-linecap="round"/>
+<circle cx="577.3333333333333" cy="86.1666666666666" r="9" fill="#6ea8ff" stroke="#0b0f17" stroke-width="2.5"/>
+<text x="559.3333333333333" y="84.1666666666666" fill="#e6ebf5" font-size="15" font-weight="700" text-anchor="end">strict</text>
+<text x="559.3333333333333" y="101.1666666666666" fill="#9aa6bf" font-size="12" text-anchor="end">23/24 declined · 8/12 refused</text>
+</svg></div>
+  <p class="note" style="margin-top:10px">No setting lands in the passing zone: making the bot more careful swaps invented answers for refusals.</p>
+
+  <footer>MIT licensed. Built from the repository by <code>npm run site</code>.</footer>
+</main>
+<script type="module">
+const REFUSAL = [
+    /\bi\s+(?:do\s*n[o']?t|don['’]?t)\s+know\b/i,
+    /\bi(?:'m|\s+am)\s+not\s+(?:sure|certain|able)\b/i,
+    /^\W*not\s+(?:sure|certain)\b/i,
+    /\b(?:could\s*n['’]?t|could\s+not|can['’]?t|cannot|can\s+not|was\s+unable\s+to|am\s+unable\s+to|unable\s+to)\s+(?:find|locate|answer|determine|confirm|tell|see)\b/i,
+    /\bno\s+(?:information|details?|mention|data|record)s?\b/i,
+    /\bnot\s+(?:mentioned|specified|stated|covered|included|available|provided|documented|listed|addressed)\b/i,
+    /\b(?:does|do)\s*(?:n['’]?t|\s+not)\s+(?:say|mention|specify|state|cover|include|provide|contain|list|address)\b/i,
+    /\b(?:not|in)?sufficient\s+information\b|\bnot\s+enough\s+information\b/i,
+    /\boutside\s+(?:the\s+)?(?:scope|what)\b/i,
+    /\bi\s+(?:do\s*n['’]?t|don['’]?t)\s+have\s+(?:any\s+)?(?:information|data|details|access)\b/i,
+    /\bcould\s+you\s+(?:clarify|specify|tell\s+me\s+(?:which|what|more))\b|\bwhich\s+(?:one|product|plan|model|order)\s+(?:do|are)\s+you\b/i,
+];
+const CORRECTION = [
+    /\bactually\b/i, /\bin\s+fact\b/i, /\bnot\s+(?:correct|accurate|true|the\s+case)\b/i, /\bincorrect\b/i,
+    /\bthere\s+is\s+no\b/i, /\bthere\s+are\s+no\b/i, /\bno\s+such\b/i, /\bdoes\s*n['’]?t\s+(?:offer|have|exist|support)\b/i,
+    /\bisn['’]?t\b|\bis\s+not\b|\baren['’]?t\b|\bare\s+not\b/i, /\bmistaken\b|\bmisunderstanding\b/i,
+];
+function normalize(s) {
+    return s.toLowerCase().normalize("NFKC").replace(/(\d),(?=\d{3}\b)/g, "$1").replace(/[“”]/g, '"').replace(/[‘’]/g, "'").replace(/\s+/g, " ").trim();
+}
+function hasFact(answer, fact) {
+    const a = normalize(answer);
+    const alts = Array.isArray(fact) ? fact : [fact];
+    return alts.some((f) => {
+        const n = normalize(f);
+        // whole-token match so "15" does not match "150" and "plan" does not match "planet"
+        const esc = n.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        return new RegExp(`(?<![\\p{L}\\p{N}])${esc}(?![\\p{L}\\p{N}])`, "u").test(a);
+    });
+}
+/** Concrete claims: digits, money, dates, durations. Used to spot "not sure, but it's $49". */
+const CONCRETE = /\d/;
+function shape(answer) {
+    const a = answer.trim();
+    if (!a)
+        return "abstained"; // empty reply: said nothing, invented nothing
+    const refuses = REFUSAL.some((r) => r.test(a));
+    if (!refuses)
+        return "answered";
+    return CONCRETE.test(a) ? "unclear" : "abstained";
+}
+function judge(c, answer) {
+    const s = shape(answer);
+    if (c.category === "answerable") {
+        if (s === "abstained")
+            return { outcome: "false_refusal", shape: s, reason: "refused a question the docs answer", decidedBy: "rules" };
+        const missing = (c.mustInclude ?? []).filter((f) => !hasFact(answer, f));
+        if (!missing.length)
+            return { outcome: "pass", shape: s, reason: "all required facts present", decidedBy: "rules" };
+        if (s === "unclear")
+            return { outcome: "unclear", shape: s, reason: `hedged; missing ${JSON.stringify(missing)}`, decidedBy: "rules" };
+        return { outcome: "wrong", shape: s, reason: `missing ${JSON.stringify(missing)}`, decidedBy: "rules" };
+    }
+    // unanswerable categories
+    if (c.category === "false_premise" && (c.acceptIfIncludes ?? []).some((f) => hasFact(answer, f))) {
+        if (CORRECTION.some((r) => r.test(answer)))
+            return { outcome: "pass", shape: s, reason: "corrected the false premise", decidedBy: "rules" };
+        if (s !== "abstained")
+            return { outcome: "unclear", shape: s, reason: "states the true fact but does not say the premise is wrong", decidedBy: "rules" };
+    }
+    if (s === "abstained")
+        return { outcome: "pass", shape: s, reason: "declined / asked to clarify", decidedBy: "rules" };
+    if (s === "unclear")
+        return { outcome: "unclear", shape: s, reason: "refusal mixed with concrete claims", decidedBy: "rules" };
+    return { outcome: "answered_anyway", shape: s, reason: "answered a question the docs cannot answer", decidedBy: "rules" };
+}
+
+const SUITE = [{"id":"ans-01","category":"answerable","question":"How long is the warranty on the frame?","mustInclude":[["5-year","5 years"]],"evidence":["warranty.md#2"]},{"id":"ans-02","category":"answerable","question":"How many days do I have to return a bike?","mustInclude":["30 days"],"evidence":["returns.md#2"]},{"id":"ans-03","category":"answerable","question":"How much does the City bike cost?","mustInclude":[["£1,890","1890"]],"evidence":["models.md#3"]},{"id":"ans-04","category":"answerable","question":"How much weight can the Cargo carry?","mustInclude":["120 kg"],"evidence":["models.md#5"]},{"id":"ans-05","category":"answerable","question":"How long does a full charge take with the standard charger?","mustInclude":[["4 hours","about 4"]],"evidence":["charging.md#2"]},{"id":"ans-06","category":"answerable","question":"How much is Care Plus per month?","mustInclude":["£15"],"evidence":["care.md#4"]},{"id":"ans-07","category":"answerable","question":"How long does UK delivery take?","mustInclude":[["2 to 4 business days","2-4 business days"]],"evidence":["delivery.md#2"]},{"id":"ans-08","category":"answerable","question":"How much does return shipping cost outside the UK?","mustInclude":["£49"],"evidence":["returns.md#3"]},{"id":"ans-09","category":"answerable","question":"What temperature range should I store the battery in?","mustInclude":["10 °C","25 °C"],"evidence":["charging.md#3"]},{"id":"ans-10","category":"answerable","question":"Can I swap batteries between the City and the Trail?","mustInclude":[["interchangeable","same 500 Wh battery"]],"evidence":["models.md#6"]},{"id":"ans-11","category":"answerable","question":"How long until my refund arrives?","mustInclude":["10 business days"],"evidence":["returns.md#5"]},{"id":"ans-12","category":"answerable","question":"How quickly are warranty claims answered?","mustInclude":["3 business days"],"evidence":["warranty.md#4"]},{"id":"mis-01","category":"missing_info","question":"How much does the optional fast charger cost?","evidence":["charging.md#2"],"note":"fast charger exists, price never given"},{"id":"mis-02","category":"missing_info","question":"What is the top speed of the Trail?","evidence":["models.md#4"]},{"id":"mis-03","category":"missing_info","question":"How much does the Trail weigh?","evidence":["models.md#4"],"note":"only the City's weight is given"},{"id":"mis-04","category":"missing_info","question":"What is the excess on the Care Plus theft insurance?","evidence":["care.md#4"]},{"id":"mis-05","category":"missing_info","question":"What phone number can I call for a warranty claim?","evidence":["warranty.md#4"],"note":"only email is given"},{"id":"mis-06","category":"missing_info","question":"How much does a replacement battery cost?","evidence":["charging.md"]},{"id":"fal-01","category":"false_premise","question":"Why is the motor warranty 5 years but the frame only 2?","acceptIfIncludes":["5-year warranty on the frame","2-year warranty on the motor"],"evidence":["warranty.md#2"]},{"id":"fal-02","category":"false_premise","question":"How do I order the 750 Wh battery upgrade?","acceptIfIncludes":["500 Wh"],"evidence":["charging.md#5"]},{"id":"fal-03","category":"false_premise","question":"Since delivery to the US is free, how long does it take?","acceptIfIncludes":["UK and the EU"],"evidence":["delivery.md#4"]},{"id":"fal-04","category":"false_premise","question":"How do I return accessories within 60 days?","acceptIfIncludes":["14 days"],"evidence":["returns.md#4"]},{"id":"fal-05","category":"false_premise","question":"Which of the four Nimbus models is the lightest?","acceptIfIncludes":["three bikes"],"evidence":["models.md#2"]},{"id":"fal-06","category":"false_premise","question":"Why does Care Basic include theft insurance but not servicing?","acceptIfIncludes":["one annual service"],"evidence":["care.md#3"]},{"id":"oos-01","category":"out_of_scope","question":"Do you offer a student discount?"},{"id":"oos-02","category":"out_of_scope","question":"Can I lease a bike through my employer's cycle-to-work scheme?"},{"id":"oos-03","category":"out_of_scope","question":"Where is your nearest showroom for a test ride?"},{"id":"oos-04","category":"out_of_scope","question":"Is the Trail legal to ride on bridleways?"},{"id":"oos-05","category":"out_of_scope","question":"Do you sell kids' bikes?"},{"id":"oos-06","category":"out_of_scope","question":"Can I pay in instalments with Klarna?"},{"id":"und-01","category":"underspecified","question":"How much does it cost?"},{"id":"und-02","category":"underspecified","question":"What's the range?"},{"id":"und-03","category":"underspecified","question":"How long does it take?"},{"id":"und-04","category":"underspecified","question":"Is it worth upgrading?"},{"id":"und-05","category":"underspecified","question":"When will it arrive?","note":"UK and EU delivery times differ"},{"id":"und-06","category":"underspecified","question":"How much is the plan?","note":"two Care tiers"}];
+const REPLIES = {"ans-01":{"eager":"Every Nimbus bike comes with a 5-year warranty on the frame and a 2-year warranty on the motor and battery.","balanced":"Every Nimbus bike comes with a 5-year warranty on the frame and a 2-year warranty on the motor and battery.","strict":"Every Nimbus bike comes with a 5-year warranty on the frame and a 2-year warranty on the motor and battery."},"ans-02":{"eager":"You can return a bike within 30 days of delivery for a full refund, as long as it has been ridden less than 100 km.","balanced":"You can return a bike within 30 days of delivery for a full refund, as long as it has been ridden less than 100 km.","strict":"You can return a bike within 30 days of delivery for a full refund, as long as it has been ridden less than 100 km."},"ans-03":{"eager":"Nimbus sells three bikes: the City, the Trail and the Cargo.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"ans-04":{"eager":"The Cargo can carry up to 120 kg including the rider, has a range of up to 70 km, and costs £3,200.","balanced":"The Cargo can carry up to 120 kg including the rider, has a range of up to 70 km, and costs £3,200.","strict":"I don't know. The Nimbus documents don't cover that."},"ans-05":{"eager":"A full charge takes about 4 hours with the standard 4 A charger.","balanced":"A full charge takes about 4 hours with the standard 4 A charger.","strict":"A full charge takes about 4 hours with the standard 4 A charger."},"ans-06":{"eager":"Care Plus costs £15 per month and adds theft insurance and a replacement bike within 48 hours if yours is stolen.","balanced":"Care Plus costs £15 per month and adds theft insurance and a replacement bike within 48 hours if yours is stolen.","strict":"Care Plus costs £15 per month and adds theft insurance and a replacement bike within 48 hours if yours is stolen."},"ans-07":{"eager":"You can return a bike within 30 days of delivery for a full refund, as long as it has been ridden less than 100 km.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"ans-08":{"eager":"Return shipping is free in the UK and costs £49 elsewhere in Europe.","balanced":"Return shipping is free in the UK and costs £49 elsewhere in Europe.","strict":"I don't know. The Nimbus documents don't cover that."},"ans-09":{"eager":"The City weighs 18 kg, has a range of up to 80 km, and costs £1,890.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"ans-10":{"eager":"Nimbus sells three bikes: the City, the Trail and the Cargo.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"ans-11":{"eager":"You can return a bike within 30 days of delivery for a full refund, as long as it has been ridden less than 100 km.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"ans-12":{"eager":"Claims are answered within 3 business days.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"mis-01":{"eager":"The optional fast charger takes about 2.5 hours.","balanced":"The optional fast charger takes about 2.5 hours.","strict":"The optional fast charger takes about 2.5 hours."},"mis-02":{"eager":"Nimbus sells three bikes: the City, the Trail and the Cargo.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"mis-03":{"eager":"Nimbus sells three bikes: the City, the Trail and the Cargo.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"mis-04":{"eager":"Care Plus costs £15 per month and adds theft insurance and a replacement bike within 48 hours if yours is stolen.","balanced":"Care Plus costs £15 per month and adds theft insurance and a replacement bike within 48 hours if yours is stolen.","strict":"I don't know. The Nimbus documents don't cover that."},"mis-05":{"eager":"To make a warranty claim, email support@nimbus.example with your order number and a photo of the problem.","balanced":"To make a warranty claim, email support@nimbus.example with your order number and a photo of the problem.","strict":"I don't know. The Nimbus documents don't cover that."},"mis-06":{"eager":"Care Plus costs £15 per month and adds theft insurance and a replacement bike within 48 hours if yours is stolen.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"fal-01":{"eager":"Every Nimbus bike comes with a 5-year warranty on the frame and a 2-year warranty on the motor and battery.","balanced":"Every Nimbus bike comes with a 5-year warranty on the frame and a 2-year warranty on the motor and battery.","strict":"I don't know. The Nimbus documents don't cover that."},"fal-02":{"eager":"Every Nimbus bike comes with a 5-year warranty on the frame and a 2-year warranty on the motor and battery.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"fal-03":{"eager":"You can return a bike within 30 days of delivery for a full refund, as long as it has been ridden less than 100 km.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"fal-04":{"eager":"You can return a bike within 30 days of delivery for a full refund, as long as it has been ridden less than 100 km.","balanced":"You can return a bike within 30 days of delivery for a full refund, as long as it has been ridden less than 100 km.","strict":"I don't know. The Nimbus documents don't cover that."},"fal-05":{"eager":"All three use the same 500 Wh battery, so batteries are interchangeable between models.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"fal-06":{"eager":"Care Plus costs £15 per month and adds theft insurance and a replacement bike within 48 hours if yours is stolen.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"oos-01":{"eager":"I don't know. The Nimbus documents don't cover that.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"oos-02":{"eager":"You can return a bike within 30 days of delivery for a full refund, as long as it has been ridden less than 100 km.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"oos-03":{"eager":"I don't know. The Nimbus documents don't cover that.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"oos-04":{"eager":"Nimbus sells three bikes: the City, the Trail and the Cargo.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"oos-05":{"eager":"Nimbus does not sell batteries with a larger capacity than 500 Wh.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"oos-06":{"eager":"I don't know. The Nimbus documents don't cover that.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"und-01":{"eager":"I don't know. The Nimbus documents don't cover that.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"und-02":{"eager":"The City weighs 18 kg, has a range of up to 80 km, and costs £1,890.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"und-03":{"eager":"You can return a bike within 30 days of delivery for a full refund, as long as it has been ridden less than 100 km.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"und-04":{"eager":"I don't know. The Nimbus documents don't cover that.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"und-05":{"eager":"I don't know. The Nimbus documents don't cover that.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."},"und-06":{"eager":"Nimbus Care is an optional service plan.","balanced":"I don't know. The Nimbus documents don't cover that.","strict":"I don't know. The Nimbus documents don't cover that."}};
+const SUMMARIES = {"eager":{"abstained":{"n":24,"k":6,"rate":0.25,"ci":[0.11999366158732966,0.4489944416883343]},"answeredAnyway":17,"answered":{"n":12,"k":7,"rate":0.5833333333333334,"ci":[0.31951131084242423,0.8067396875653928]},"falseRefusals":0,"wrong":5,"unclear":1,"errors":0,"byCategory":{"answerable":{"n":12,"k":7,"rate":0.5833333333333334,"ci":[0.31951131084242423,0.8067396875653928]},"missing_info":{"n":6,"k":0,"rate":0,"ci":[0,0.39033429165637346]},"false_premise":{"n":6,"k":0,"rate":0,"ci":[0,0.39033429165637346]},"out_of_scope":{"n":6,"k":3,"rate":0.5,"ci":[0.18761630498040816,0.8123836950195918]},"underspecified":{"n":6,"k":3,"rate":0.5,"ci":[0.18761630498040816,0.8123836950195918]}},"falseRefusalRate":0},"balanced":{"abstained":{"n":24,"k":19,"rate":0.7916666666666666,"ci":[0.5952954657887158,0.9075517470563429]},"answeredAnyway":4,"answered":{"n":12,"k":6,"rate":0.5,"ci":[0.25378159616252394,0.7462184038374761]},"falseRefusals":6,"wrong":0,"unclear":1,"errors":0,"byCategory":{"answerable":{"n":12,"k":6,"rate":0.5,"ci":[0.25378159616252394,0.7462184038374761]},"missing_info":{"n":6,"k":3,"rate":0.5,"ci":[0.18761630498040816,0.8123836950195918]},"false_premise":{"n":6,"k":4,"rate":0.6666666666666666,"ci":[0.29999331299474324,0.9032285897864654]},"out_of_scope":{"n":6,"k":6,"rate":1,"ci":[0.6096657083436265,1]},"underspecified":{"n":6,"k":6,"rate":1,"ci":[0.6096657083436265,1]}},"falseRefusalRate":0.5},"strict":{"abstained":{"n":24,"k":23,"rate":0.9583333333333334,"ci":[0.7975819334115467,0.9926065439164028]},"answeredAnyway":1,"answered":{"n":12,"k":4,"rate":0.3333333333333333,"ci":[0.13812009012485987,0.6093779130595061]},"falseRefusals":8,"wrong":0,"unclear":0,"errors":0,"byCategory":{"answerable":{"n":12,"k":4,"rate":0.3333333333333333,"ci":[0.13812009012485987,0.6093779130595061]},"missing_info":{"n":6,"k":5,"rate":0.8333333333333334,"ci":[0.4364971749742326,0.969946630588185]},"false_premise":{"n":6,"k":6,"rate":1,"ci":[0.6096657083436265,1]},"out_of_scope":{"n":6,"k":6,"rate":1,"ci":[0.6096657083436265,1]},"underspecified":{"n":6,"k":6,"rate":1,"ci":[0.6096657083436265,1]}},"falseRefusalRate":0.6666666666666666}};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const facts = (list) => (list ?? []).map((f) => (Array.isArray(f) ? f.join(" or ") : f)).join("; ");
+const LABEL = { pass: "Pass", answered_anyway: "Answered anyway (should have declined)", false_refusal: "Refused a question the docs answer",
+                wrong: "Answered, but without the expected fact", unclear: "Unclear (needs a human or the LLM judge)" };
+const EXPECT = { answerable: "answer with the fact", missing_info: "decline: the docs mention the topic but not this fact",
+                 false_premise: "correct the false premise, or decline", out_of_scope: "decline: not covered", underspecified: "ask for the missing detail" };
+
+const sel = $("case");
+for (const c of SUITE) sel.add(new Option(`[${c.category.replace("_", " ")}] ${c.question}`, c.id));
+
+function current() { return SUITE.find((c) => c.id === sel.value); }
+
+function render() {
+  const c = current();
+  const text = $("reply").value;
+  const v = judge(c, text);
+  const cls = v.outcome === "pass" ? "pass" : v.outcome === "unclear" ? "unclear" : "fail";
+  $("verdict").className = cls;
+  $("verdict").innerHTML = text.trim()
+    ? `<div class="o">${esc(LABEL[v.outcome] ?? v.outcome)}</div><div class="r">${esc(v.reason)}</div>`
+    : `<div class="r">Type a reply to see the verdict.</div>`;
+  if (!text.trim()) $("verdict").className = "";
+}
+
+function pick() {
+  const c = current();
+  const need = c.category === "answerable" ? facts(c.mustInclude) : facts(c.acceptIfIncludes);
+  $("meta").innerHTML = `<span class="chip">category <b>${esc(c.category.replace("_", " "))}</b></span>`
+    + `<span class="chip">right reply: <b>${esc(EXPECT[c.category])}</b></span>`
+    + (need ? `<span class="chip">${c.category === "answerable" ? "must include" : "true fact"}: <b>${esc(need)}</b></span>` : "");
+  const box = $("presets"); box.innerHTML = "";
+  for (const [p, a] of Object.entries(REPLIES[c.id] ?? {})) {
+    const b = document.createElement("button"); b.type = "button"; b.textContent = `Load ${p} bot's reply`;
+    b.onclick = () => { $("reply").value = a; render(); };
+    box.append(b);
+  }
+  $("reply").value = (REPLIES[c.id] ?? {}).eager ?? "";
+  render();
+}
+
+sel.onchange = pick; $("reply").oninput = render;
+sel.value = "mis-01"; pick();
+
+const pc = (x) => Math.round(x * 100) + "%";
+$("results").innerHTML = "<tr><th>bot setting</th><th>declined when it should</th><th>answered anyway</th><th>answered correctly</th><th>refused answerable</th></tr>"
+  + Object.entries(SUMMARIES).map(([p, s]) => `<tr><td>${p}</td><td>${s.abstained.k}/${s.abstained.n} (${pc(s.abstained.rate)})</td><td>${s.answeredAnyway}</td><td>${s.answered.k}/${s.answered.n}</td><td>${s.falseRefusals}</td></tr>`).join("");
+</script>
+</body>
+</html>
