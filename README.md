@@ -28,7 +28,7 @@ It prints the report for each setting and writes them to `examples/out/`. Needs 
 
 ## Why this exists
 
-Most RAG evals score the answers to questions that *have* answers. In production, a large share of real questions don't: a price that isn't in the docs, a feature that doesn't exist, "when will it arrive?" with no order number. Those are the questions where an app invents something, and nothing in a typical test suite notices.
+Most RAG evals score the answers to questions that *have* answers. In production, plenty of real questions don't: a price that isn't in the docs, a feature that doesn't exist, "when will it arrive?" with no order number. Those are the questions where an app invents something, and nothing in a typical test suite notices.
 
 The easy fix ("refuse unless you're sure") breaks the other side: the bot starts refusing questions it could answer. You can't judge either number alone. `idk-check` always reports both.
 
@@ -91,7 +91,7 @@ Write cases by hand (see `examples/suite.json`), or let a model draft them:
 
 ```bash
 export OPENROUTER_API_KEY=...       # or IDK_API_KEY / OPENAI_API_KEY + IDK_BASE_URL
-npx idk-check generate --docs ./docs --out idk/suite.json --model openai/gpt-4o-mini
+npx idk-check generate --docs ./docs --out idk/suite.json --model <model-id>
 ```
 
 Generated cases are checked before they are kept:
@@ -143,7 +143,7 @@ const failures = gate(summarize(results), { minAbstain: 0.9, maxFalseRefusal: 0.
 
 ## Related work
 
-Research tools cover parts of this ground: KnowOrNot and UAEval4RAG study abstention in RAG systems. `idk-check` is aimed at a different job: a small, dependency-free check you drop into an existing app's CI and read in a PR.
+Research tools cover parts of this ground: [KnowOrNot](https://github.com/govtech-responsibleai/KnowOrNot) (GovTech Singapore) and [UAEval4RAG](https://github.com/SalesforceAIResearch/Unanswerability_RAGE) (Salesforce, ACL 2025) generate unanswerable questions from a knowledge base and score RAG systems on them, with LLM-based metrics. `idk-check` is aimed at a different job: a small, dependency-free check you drop into an existing app's CI and read in a PR.
 
 ## Development
 
